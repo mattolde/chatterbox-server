@@ -14,22 +14,40 @@ var handleRequest = function(request, response) {
 
   console.log("Serving request type " + request.method + " for url " + request.url);
 
-  var statusCode = 200;
-
   /* Without this line, this server wouldn't work. See the note
    * below about CORS. */
   var headers = defaultCorsHeaders;
 
   headers['Content-Type'] = "text/plain";
 
-  /* .writeHead() tells our server what HTTP status code to send back */
-  response.writeHead(statusCode, headers);
-
   /* Make sure to always call response.end() - Node will not send
    * anything back to the client until you do. The string you pass to
    * response.end() will be the body of the response - i.e. what shows
    * up in the browser.*/
-  response.end("Hello, World!");
+
+  var statusCode = 200;
+
+  if(request.url === '/1/classes/messages'){
+    
+    if(request.method === 'GET'){
+      response.end("GET Messages");    
+    } else if(request.method === 'POST') {
+      response.end("POST Save Message");
+    } else if(request.method === 'PUT') {
+      response.end("PUT Update Message");
+    } else if(request.method === 'DELETE') {
+      response.end("DELETE Messages");
+    } else {
+      response.end("DOING SOMETHING");
+    }    
+  } else {
+    // send 404 error
+    statusCode = 404;
+    response.end("404 Not Found");  
+  }
+
+  /* .writeHead() tells our server what HTTP status code to send back */
+  response.writeHead(statusCode, headers);
 };
 
 /* These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -43,3 +61,5 @@ var defaultCorsHeaders = {
   "access-control-allow-headers": "content-type, accept",
   "access-control-max-age": 10 // Seconds.
 };
+
+module.exports = handleRequest;
